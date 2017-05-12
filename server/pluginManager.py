@@ -6,21 +6,28 @@
 import socket
 
 class Voicegaming():
-  players=""
+  players="Hello World"
+  send=False
   def conn(self,cmd):
-    HOST = ""
+    HOST = "127.0.0.1"
     PORT = 5000
+
     conn = socket.socket()
     conn.connect((HOST,PORT))
-    if(cmd=="getPlayers"):
-      conn.send("getPlayers")
-      data=conn.recv(1024).decode()
-      players=data
-      conn.close()
-      return getPlayers()
-  def getPlayers(self):
-    conn("getPlayers")
-    return players
-    
-    
 
+    while self.send==False:
+      if(cmd=="getPlayers"):
+        conn.send(cmd.encode())
+        data=conn.recv(1024).decode()
+        self.players=data
+        conn.close()
+        self.send=True
+        return self.getPlayers()
+    conn.close()
+  def getPlayers(self):
+    if(self.send==False):
+      self.conn("getPlayers")
+    else:
+      self.send=True
+      return self.players
+    
