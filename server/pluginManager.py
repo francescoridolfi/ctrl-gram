@@ -5,11 +5,11 @@
 
 import socket
 
-class Voicegaming():
+class Voicegam():
   players="Hello World"
   send=False
   def conn(self,cmd):
-    HOST = "127.0.0.1"
+    HOST = "mc.herocraft.it"
     PORT = 5000
 
     conn = socket.socket()
@@ -17,7 +17,8 @@ class Voicegaming():
 
     while self.send==False:
       if(cmd=="getPlayers"):
-        conn.send(cmd.encode())
+        data="getPlayers"
+        conn.send(data.encode())
         data=conn.recv(1024).decode()
         self.players=data
         conn.close()
@@ -30,4 +31,3 @@ class Voicegaming():
     else:
       self.send=True
       return self.players
-    
