@@ -31,3 +31,6 @@ class Voicegam():
     else:
       self.send=True
       return self.players
+class Events():
+  def getEvent(self,e):
+    return e
