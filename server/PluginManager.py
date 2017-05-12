@@ -5,7 +5,7 @@
 
 import socket
 
-class Voicegam():
+class Voicegram():
   players=""
   send=False
   def conn(self,cmd):
@@ -24,6 +24,13 @@ class Voicegam():
         conn.close()
         self.send=True
         return self.getPlayers()
+      if(cmd=="connect"):
+        data="connect"
+        conn.send(data.encode())
+        data=conn.recv(1024).decode()
+        conn.close()
+        self.send=True
+        return self.connect()
     conn.close()
   def getPlayers(self):
     if(self.send==False):
@@ -31,6 +38,9 @@ class Voicegam():
     else:
       self.send=True
       return self.players
-class Events():
-  def getEvent(self,e):
-    return e
+  def connect(self):
+    if(self.send==False):
+      return self.conn("connect")
+    else:
+      self.send=False
+      return "Connect!"
