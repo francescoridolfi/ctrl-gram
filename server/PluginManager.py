@@ -6,10 +6,10 @@
 import socket
 
 class Voicegam():
-  players="Hello World"
+  players=""
   send=False
   def conn(self,cmd):
-    HOST = "mc.herocraft.it"
+    HOST = "127.0.0.1"
     PORT = 5000
 
     conn = socket.socket()
