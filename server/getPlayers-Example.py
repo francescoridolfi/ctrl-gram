@@ -5,7 +5,7 @@ import PluginManager
 server=PluginManager.Voicegram()
 
 #for open a request
-server.getPlayers()
+server.connect()
 
 #for split the players in array
 players=server.getPlayers()
