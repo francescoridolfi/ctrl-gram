@@ -6,7 +6,7 @@
 import socket
 
 class Voicegram():
-  players=""
+  result=None
   send=False
   def conn(self,cmd):
     HOST = "127.0.0.1"
@@ -20,27 +20,62 @@ class Voicegram():
         data="getPlayers"
         conn.send(data.encode())
         data=conn.recv(1024).decode()
-        self.players=data
+        self.result=data
         conn.close()
         self.send=True
         return self.getPlayers()
       if(cmd=="connect"):
-        data="connect"
+        data="getPlayers"
         conn.send(data.encode())
         data=conn.recv(1024).decode()
         conn.close()
         self.send=True
+        self.result=data
         return self.connect()
+      if(cmd=="join"):
+        data="join"
+        conn.send(data.encode())
+        data=conn.recv(1024).decode()
+        self.result = data
+        conn.close()
+        self.send=True
+        return self.getEvent("onJoin")
+      if(cmd=="msg"):
+        data="msg"
+        conn.send(data.encode())
+        data=conn.recv(1024).decode()
+        self.result = data
+        conn.close()
+        self.send=True
+        return self.getEvent("onMsg")
     conn.close()
   def getPlayers(self):
     if(self.send==False):
       self.conn("getPlayers")
     else:
       self.send=True
-      return self.players
+      res=self.result
+      self.result=None
+      return res
   def connect(self):
     if(self.send==False):
       return self.conn("connect")
     else:
-      self.send=False
-      return "Connect!"
+      res=self.result
+      self.result=None
+      return res
+  def getEvent(self,e):
+    if(e=="onJoin"):
+      if(self.send==False):
+        self.conn("join")
+      else:
+        res=self.result
+        self.result=None
+        return res
+    if(e=="onMsg"):
+      if(self.send==False):
+        self.conn("msg")
+      else:
+        res=self.result
+        self.result=None
+        return res
