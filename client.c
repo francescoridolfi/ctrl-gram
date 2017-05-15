@@ -29,16 +29,18 @@ int main(int argc , char *argv[])
     }
 
     puts("Connected\n");
-    puts("Bienvenido al Chatroom, puedes empezar a escribir en la sala!");
-
+    puts("Benvenuto in Voicegram");
+    char *command = "join";
+    char *message;
     //keep communicating with server
     while(1)
     {
 
-        printf("Enter message: ");
-    fgets(message, sizeof(message),stdin);
-        //scanf("%s" , message);
-
+   	// fgets(message, sizeof(message),stdin);
+        scanf("$> %s" , message);
+	//if(!strcmp(message ,command)) {
+	//	puts("ciao");
+	//}
         //Send some data
         if( send(sock , message , strlen(message) , 0) < 0)
         {
@@ -54,9 +56,10 @@ int main(int argc , char *argv[])
         }
 
     printf("Server Reply: %s\n", server_reply);
-    server_reply[0]='\0'; 
+    server_reply[0]='\0';
     }
 
     close(sock);
     return 0;
 }
+
