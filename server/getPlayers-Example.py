@@ -1,6 +1,9 @@
 #import the framework
 import PluginManager
 
+#set server access point
+server.setServer("127.0.0.1",5000)
+
 #define the root
 server=PluginManager.Voicegram()
 
