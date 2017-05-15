@@ -8,9 +8,11 @@ import socket
 class Voicegram():
   result=None
   send=False
+  HOST=""
+  PORT=5000
   def conn(self,cmd):
-    HOST = "127.0.0.1"
-    PORT = 5000
+    HOST = self.HOST
+    PORT = self.PORT
 
     conn = socket.socket()
     conn.connect((HOST,PORT))
@@ -79,3 +81,6 @@ class Voicegram():
         res=self.result
         self.result=None
         return res
+  def setServer(self,ip,port):
+    self.HOST=ip
+    self.PORT=port
