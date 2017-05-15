@@ -6,7 +6,7 @@
 import socket
 
 class Voicegram():
-  result=""
+  result=None
   HOST=""
   PORT=5000
   def conn(self,cmd):
@@ -16,35 +16,34 @@ class Voicegram():
     conn = socket.socket()
     conn.connect((HOST,PORT))
 
-    while self.send==False:
-      if(cmd=="getPlayers"):
-        data="getPlayers"
-        conn.send(data.encode())
-        data=conn.recv(1024).decode()
-        self.result=data
-        conn.close()
-        return data
-      if(cmd=="connect"):
-        data="getPlayers"
-        conn.send(data.encode())
-        data=conn.recv(1024).decode()
-        conn.close()
-        self.result=data
-        return data
-      if(cmd=="join"):
-        data="join"
-        conn.send(data.encode())
-        data=conn.recv(1024).decode()
-        self.result = data
-        conn.close()
-        return data
-      if(cmd=="msg"):
-        data="msg"
-        conn.send(data.encode())
-        data=conn.recv(1024).decode()
-        self.result = data
-        conn.close()
-        return data
+    if(cmd=="getPlayers"):
+      data="getPlayers"
+      conn.send(data.encode())
+      data=conn.recv(1024).decode()
+      self.result=data
+      conn.close()
+      return data
+    if(cmd=="connect"):
+      data="getPlayers"
+      conn.send(data.encode())
+      data=conn.recv(1024).decode()
+      conn.close()
+      self.result=data
+      return data
+    if(cmd=="join"):
+      data="join"
+      conn.send(data.encode())
+      data=conn.recv(1024).decode()
+      self.result = data
+      conn.close()
+      return data
+    if(cmd=="msg"):
+      data="msg"
+      conn.send(data.encode())
+      data=conn.recv(1024).decode()
+      self.result = data
+      conn.close()
+      return data
     conn.close()
   def getPlayers(self):
       return self.conn("getPlayers")
