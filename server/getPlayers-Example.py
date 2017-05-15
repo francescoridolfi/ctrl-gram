@@ -5,13 +5,11 @@ import PluginManager
 server=PluginManager.Voicegram()
 
 #set server access point
-server.setServer("127.0.0.1",5000)
-
-#for open a request
-server.getPlayers()
+server.setServer("127.0.0.1",8888)
 
 #get players in the server 
 players=server.getPlayers()
 
 #print the result
-print(z)
+print(players)
+
