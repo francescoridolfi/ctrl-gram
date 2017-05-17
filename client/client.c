@@ -33,7 +33,7 @@ int main(int argc , char *argv[])
     }
     puts("Socket created");
 
-    server.sin_addr.s_addr = inet_addr("127.0.0.1");
+    server.sin_addr.s_addr = inet_addr(argv[1]);
     server.sin_family = AF_INET;
     server.sin_port = htons( 8888 );
 
@@ -46,8 +46,6 @@ int main(int argc , char *argv[])
 
     puts("Connected\n");
     puts("Benvenuti in Voicegram!");
-    const int SIZE = strlen(my_ip) +1;
-    send(sock, my_ip, SIZE, 0);
     //keep communicating with server
     while(1)
     {
@@ -76,18 +74,4 @@ int main(int argc , char *argv[])
 
     close(sock);
     return 0;
-}
-int ip() {
-  system("wget -q http://www.indirizzo-ip.com/ip.php?.txt");
-  const char* daeseg = "cat ip.php?.txt";
-  FILE * f = popen( daeseg, "r" );
-  if ( f == 0 ) {
-     fprintf( stderr, "Could not find IP\n" );
-     return 1;
-  }
-  const int BUFSIZE = 15;
-  while( fgets( my_ip, BUFSIZE,  f ) ) {}
-  pclose( f );
-  system("rm ip.php*");
-  return 0;
 }

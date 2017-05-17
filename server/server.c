@@ -16,7 +16,6 @@ LICENSE GPLv3
 
 // Global variable
 int ip_index = 0;
-char ip[15];
 char *ip_table[100];
 // Prototype function
 void *connection_handler(void *);
@@ -59,13 +58,10 @@ int main(int argc , char *argv[])
     while( (new_socket = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c)) )
     {
         puts("Connection accepted");
-        //int p1 = client.sin_addr.s_addr&0xFF;
-        //int p2 = (client.sin_addr.s_addr&0xFF00)>>8;
-        //int p3 = (client.sin_addr.s_addr&0xFF0000)>>16;
-        //int p4 = (client.sin_addr.s_addr&0xFF000000)>>24;
-        //printf("IP DEBUG = %d.%d.%d.%d\n",p1,p2,p3,p4);
         printf("IP address is: %s\n", inet_ntoa(client.sin_addr));
         printf("port is: %d\n", (int) ntohs(client.sin_port));
+        ip_table[ip_index] = inet_ntoa(client.sin_addr);
+        ip_index++;
         pthread_t sniffer_thread;
         new_sock = malloc(1);
         *new_sock = new_socket;
@@ -100,10 +96,6 @@ void *connection_handler(void *socket_desc)
     int read_size;
     char *message , client_message[1024];
     //Receive a message from client
-    recv(sock, ip , 15 ,0);
-    ip_table[ip_index] = ip;
-    puts(ip_table[ip_index]);
-    ip_index++;
     while( (read_size = recv(sock , client_message , 1024 , 0)) > 0 )
     {
         //Send the message back to client
