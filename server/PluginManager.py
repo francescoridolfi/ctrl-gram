@@ -4,51 +4,48 @@
 #DEVELOPED BY ridolfino AND SourceCode2
 
 import socket
+from threading import Thread
+from socketserver import ThreadingMixIn
+
 
 class Voicegram():
   result=None
-  HOST=""
-  PORT=5000
-  PASSWD=""
+  HOST="127.0.0.1"
+  PORT=8889
   def conn(self,cmd):
     HOST = self.HOST
     PORT = self.PORT
-    PASSWD=self.PASSWD
 
     conn = socket.socket()
     conn.connect((HOST,PORT))
-    data=PASSWD
-    conn.send(data.encode())
-    data=conn.recv(1024).decode()
-    if(data=="True"):
-        if(cmd=="getPlayers"):
-          data="getPlayers"
-          conn.send(data.encode())
-          data=conn.recv(1024).decode()
-          self.result=data
-          conn.close()
-          return data
-        if(cmd=="connect"):
-          data="getPlayers"
-          conn.send(data.encode())
-          data=conn.recv(1024).decode()
-          conn.close()
-          self.result=data
-          return data
-        if(cmd=="join"):
-          data="join"
-          conn.send(data.encode())
-          data=conn.recv(1024).decode()
-          self.result = data
-          conn.close()
-          return data
-        if(cmd=="msg"):
-          data="msg"
-          conn.send(data.encode())
-          data=conn.recv(1024).decode()
-          self.result = data
-          conn.close()
-          return data
+    if(cmd=="getPlayers"):
+      data="getPlayers"
+      conn.send(data.encode())
+      data=conn.recv(1024).decode()
+      self.result=data
+      conn.close()
+      return data
+    if(cmd=="connect"):
+      data="getPlayers"
+      conn.send(data.encode())
+      data=conn.recv(1024).decode()
+      conn.close()
+      self.result=data
+      return data
+    if(cmd=="join"):
+      data="join"
+      conn.send(data.encode())
+      data=conn.recv(1024).decode()
+      self.result = data
+      conn.close()
+      return data
+    if(cmd=="msg"):
+      data="msg"
+      conn.send(data.encode())
+      data=conn.recv(1024).decode()
+      self.result = data
+      conn.close()
+      return data
     conn.close()
   def getPlayers(self):
       return self.conn("getPlayers")
@@ -59,8 +56,23 @@ class Voicegram():
         return self.conn("join")
     if(e=="onMsg"):
         return self.conn("msg")
-  def setServer(self,ip,port,passwd):
+  def setServer(self,ip,port):
     self.HOST=ip
     self.PORT=port
-    self.PASSWD=passwd
    
+class Bot():
+  HOST="127.0.0.1"
+  PORT=8888
+
+  def newConn(self,function):
+    HOST = self.HOST
+    PORT = self.PORT
+
+    conn = socket.socket()
+    conn.connect((HOST,PORT))
+    return function(conn)
+  
+  def setConn(self,ip,port,nick):
+    self.IP=ip
+    self.PORT=port
+    self.NICK=nick
