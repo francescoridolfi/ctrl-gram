@@ -4,7 +4,7 @@ Made by SourceCode2 and ridolfino
 Github repository : https://github.com/SourceCode2/Voicegram.git
 LICENSE GPLv3
 */
-
+#include""
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
@@ -12,15 +12,12 @@ LICENSE GPLv3
 #include<arpa/inet.h>
 
 // Global variable
-char my_ip[15];
 
 // Prototype function
-int ip();
 
 // START !!
 int main(int argc , char *argv[])
 {
-    ip();
     int sock;
     struct sockaddr_in server;
     char message[1000] , server_reply[2000];
@@ -40,12 +37,10 @@ int main(int argc , char *argv[])
     //Connect to remote server
     if (connect(sock , (struct sockaddr *)&server , sizeof(server)) < 0)
     {
-        perror("connect failed. Error");
+        perror("connect failed. Error\n");
         return 1;
     }
-
     puts("Connected\n");
-    puts("Benvenuti in Voicegram!");
     //keep communicating with server
     while(1)
     {
@@ -55,7 +50,7 @@ int main(int argc , char *argv[])
         //scanf("%s" , message);
         if( send(sock , message , strlen(message) , 0) < 0)
         {
-            puts("Send failed");
+            puts("Send failed\n");
             return 1;
         }
         memset(message, 0 , strlen(message));
@@ -63,7 +58,7 @@ int main(int argc , char *argv[])
         //Receive a reply from the server
         if( recv(sock , server_reply , 1024 , 0) < 0)
         {
-            puts("recv failed");
+            puts("recv failed\n");
             break;
         }
 
