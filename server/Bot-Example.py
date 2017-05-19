@@ -9,5 +9,5 @@ def function(conn):
     conn.close()
     return data
 
-bot.setConn("127.0.0.1",5000,"Bot-Voicegram-Test")
+bot.setConn("127.0.0.1",8888,"Bot-Voicegram-Test")
 print(bot.newConn(function))
