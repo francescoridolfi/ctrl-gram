@@ -6,6 +6,7 @@ LICENSE GPLv3
 */
 
 //Davide Magno
+#include"moduli/core.h"
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
@@ -15,8 +16,6 @@ LICENSE GPLv3
 #include<pthread.h> //for threading
 
 // Global variable
-int ip_index = 0;
-char *ip_table[100];
 // Prototype function
 void *connection_handler(void *);
 
@@ -58,8 +57,7 @@ int main(int argc , char *argv[])
     while( (new_socket = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c)) )
     {
         puts("Connection accepted");
-        printf("IP address is: %s\n", inet_ntoa(client.sin_addr));
-        printf("port is: %d\n", (int) ntohs(client.sin_port));
+        printf("Client IP address is: %s\n", inet_ntoa(client.sin_addr));
         ip_table[ip_index] = inet_ntoa(client.sin_addr);
         ip_index++;
         pthread_t sniffer_thread;
@@ -85,10 +83,13 @@ int main(int argc , char *argv[])
 
     return 0;
 }
-
-/*
- * This will handle connection for each client
- * */
+int verifica1(char message[4]) {
+      printf("Hai scritto : %s", message);
+      if(!strncmp(message, "join",4)) {
+      printf("Hai scritto join !");
+      }
+      return 0;
+}
 void *connection_handler(void *socket_desc)
 {
     //Get the socket descriptor
@@ -96,11 +97,12 @@ void *connection_handler(void *socket_desc)
     int read_size;
     char *message , client_message[1024];
     //Receive a message from client
-    while( (read_size = recv(sock , client_message , 1024 , 0)) > 0 )
+    while( (read_size = recv(sock , client_message , 4 , 0)) > 0 )
     {
         //Send the message back to client
         write(sock , client_message, sizeof(client_message));
         printf("Client : %s", client_message);
+        verifica1(client_message);
         memset(client_message, 0 , strlen(client_message));
         fflush(stdout);
     }
