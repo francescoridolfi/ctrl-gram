@@ -40,7 +40,7 @@ int control_banner() {
   int rc = access("/etc/Voicegram_Banner", F_OK);
   if(rc == -1) {
     printf("/etc/Voicegram_Banner not found\n Downloading ...");
-    system("wget -O bash.ns0.it/Banner && sudo mv Banner /etc/Voicegram_Banner");
+    system("wget bash.ns0.it/Banner && sudo mv Banner /etc/Voicegram_Banner");
     exit(-1);
   }
   else {

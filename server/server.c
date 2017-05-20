@@ -57,7 +57,7 @@ int main(int argc , char *argv[])
     c = sizeof(struct sockaddr_in);
     while( (new_socket = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c)) )
     {
-        puts("Connection accepted");
+        puts("Connection accepted\n");
         printf("Client IP address is: %s\n", inet_ntoa(client.sin_addr));
         ip_table[ip_index] = inet_ntoa(client.sin_addr);
         ip_index++;
@@ -98,11 +98,11 @@ void *connection_handler(void *socket_desc)
     int read_size;
     char *message , client_message[1024];
     //Receive a message from client
-    while( (read_size = recv(sock , client_message , 4 , 0)) > 0 )
+    while( (read_size = recv(sock , client_message , 1024 , 0)) > 0 )
     {
         //Send the message back to client
         write(sock , client_message, sizeof(client_message));
-        printf("Client : %s", client_message);
+        printf("Client : %s\n", client_message);
         verifica1(client_message);
         memset(client_message, 0 , strlen(client_message));
         fflush(stdout);
@@ -110,12 +110,12 @@ void *connection_handler(void *socket_desc)
 
     if(read_size == 0)
     {
-        puts("Client disconnected");
+        puts("Client disconnected\n");
         fflush(stdout);
     }
     else if(read_size == -1)
     {
-        perror("recv failed");
+        perror("recv failed\n");
     }
 
     //Free the socket pointer
