@@ -6,7 +6,7 @@ LICENSE GPLv3
 */
 
 //Davide Magno
-#include"moduli/core.h"
+#include"../moduli/core.h"
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
@@ -24,6 +24,7 @@ void *connection_handler(void *);
 
 int main(int argc , char *argv[])
 {
+    control_banner();
     int socket_desc , new_socket , c , *new_sock;
     struct sockaddr_in server , client;
     char *message;
