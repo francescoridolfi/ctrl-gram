@@ -1,6 +1,6 @@
 #!/usr/lib/python
 #Require python3.x
-#VOICEGRAM PluginManager.py v1.0 BETA
+#ZITAGRAM PluginManager.py v1.0 BETA
 #DEVELOPED BY ridolfino AND SourceCode2
 
 import socket
@@ -8,7 +8,7 @@ from threading import Thread
 from socketserver import ThreadingMixIn
 
 
-class Voicegram():
+class Zitagram():
   result=None
   HOST="127.0.0.1"
   PORT=8889
