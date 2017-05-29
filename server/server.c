@@ -1,7 +1,7 @@
 /*
 FILE server.c
 Made by SourceCode2 and ridolfino
-Github repository : https://github.com/SourceCode2/Voicegram.git
+Github repository : https://github.com/SourceCode2/Zitagram.git
 LICENSE GPLv3
 */
 
