@@ -13,7 +13,9 @@ LICENSE GPLv3
 
 int main(int argc , char *argv[])
 {
-    control_banner();
+    control();
+    info();
+    init();
     int sock;
     struct sockaddr_in server;
     char message[1024] , server_reply[1024];

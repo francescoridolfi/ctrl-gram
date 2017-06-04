@@ -24,7 +24,10 @@ void *connection_handler(void *);
 
 int main(int argc , char *argv[])
 {
-    control_banner();
+    control();
+    info();
+    init();
+    printf("%s\n",identity);
     int socket_desc , new_socket , c , *new_sock;
     struct sockaddr_in server , client;
     char *message;
