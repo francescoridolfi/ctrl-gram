@@ -42,10 +42,9 @@ int main(int argc , char *argv[]){
     if(socket_desc == -1){
         fprintf(stderr, "\033[1;31m[ERROR]\tCould not create socket\033[0;0m\n");
         exit(-1);
-    }
-    else {printf("\033[1;32m[OK]\tSocket created\033[0;0m\n");}
+    } printf("\033[1;32m[OK]\tSocket created\033[0;0m\n");
 
-    /*== Prepare the sockaddr_in structure ==*/
+    /*== Settings ==*/
     server.sin_family = AF_INET;
     server.sin_addr.s_addr = INADDR_ANY;
     server.sin_port = htons(port);
@@ -54,8 +53,7 @@ int main(int argc , char *argv[]){
     if( bind(socket_desc,(struct sockaddr *)&server , sizeof(server)) < 0){
         fprintf(stderr,"\033[1;31m[ERROR]\tBind failed\033[0;0m\n");
         return 1;
-    }
-    printf("\033[1;32m[OK]\tBind done\033[0;0m\n");
+    } printf("\033[1;32m[OK]\tBind done\033[0;0m\n");
 
     /*== Listen  & Accept ==*/
     listen(socket_desc , 3);
@@ -73,7 +71,7 @@ int main(int argc , char *argv[]){
         send_pid = fork();
         switch (send_pid){
           case -1:
-            fprintf(stderr, "\033[1;31m[ERROR]\tError fork\033[0;0m\n");
+            fprintf(stderr, "\033[1;31m[ERROR]\tFork failure\033[0;0m\n");
             exit(-1);
           case 0:
             ctrl_send();
@@ -84,8 +82,8 @@ int main(int argc , char *argv[]){
         pthread_t sniffer_thread;
         if( pthread_create( &sniffer_thread , NULL ,  connection_handler , (void*) new_sock) < 0){
             fprintf(stderr, "\033[1;31m[ERROR]\tCould not create thread\033[0;0m\n");
-            exit(-1);}
-        printf("\033[1;32m[OK]\tHandler assigned\033[0;0m\n");
+            exit(-1);
+        } printf("\033[1;32m[OK]\tHandler assigned\033[0;0m\n");
     }
     if (new_socket<0){
         fprintf(stderr, "\033[1;31m[ERROR]\tAccept failed\033[0;0m\n");
@@ -104,10 +102,10 @@ void ctrl_send(){
 
   /*== Create socket ==*/
   sock = socket(AF_INET , SOCK_STREAM , 0);
-  if (sock == -1){
+  if(sock == -1){
       fprintf(stderr, "\033[1;31m[ERROR]\tCould not create socket (for send)\033[0;0m\n");
-      exit(-2);}
-  printf("\033[1;32m[OK]\tSocket created (for send)\033[0;0m\n");
+      exit(-2);
+  } printf("\033[1;32m[OK]\tSocket created (for send)\033[0;0m\n");
 
   /*== Settings ==*/
   server.sin_addr.s_addr = inet_addr(ip_table[ip_index-1]);
@@ -118,12 +116,10 @@ void ctrl_send(){
   if (connect(sock, (struct sockaddr *)&server , sizeof(server)) < 0){
       fprintf(stderr, "\033[1;31m[ERROR]\tConnect to client failed\033[0;0m\n");
       exit(-2);
-  }
-  printf("\033[1;32m[OK]\tConnected to client\033[0;0m\n");
+  } printf("\033[1;32m[OK]\tConnected to client\033[0;0m\n");
   while(1){
     write(sock ,"\nciao\n",sizeof("\nciao\n"));
   }
-
 }
 void *connection_handler(void *socket_desc){
     //Get the socket descriptor

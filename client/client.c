@@ -35,28 +35,29 @@ int main(int argc , char *argv[]){
     int port = atoi(argv[2]);
     pid_t recv_pid; int recv_status;
 
-    //Create socket
+    /*== Create socket ==*/
     sock = socket(AF_INET , SOCK_STREAM , 0);
     if (sock == -1) {
-        printf("Could not create socket");
-    }
-    puts("Socket created");
+        fprintf("\033[1;31m[ERROR]\tCould not create socket\033[0;0m\n");
+        exit(-1);
+    } printf("\033[1;32m[OK]\tSocket created\033[0;0m\n");
+
+    /*== Settings ==*/
     server.sin_addr.s_addr = inet_addr(argv[1]);
     server.sin_family = AF_INET;
     server.sin_port = htons(port);
 
-    //Connect to remote server
+    /*== Connect to remote server ==*/
     if (connect(sock , (struct sockaddr *)&server , sizeof(server)) < 0) {
-        perror("connect failed. Error");
-        return 1;
-    }
-    puts("Connected\n");
+        fprintf(stderr, "\033[1;31m[ERROR]\tConnect failed\033[0;0m\n");
+        exit(-1);
+    } printf("\033[1;32m[OK]\tConnected\033[0;0m\n");
 
     /*== FORK!! ==*/
     recv_pid = fork();
     switch (recv_pid) {
       case -1:
-        fprintf(stderr, "\033[1;31mError fork\033[0;0m\n");
+        fprintf(stderr, "\033[1;31m[ERROR]\tFork failure\033[0;0m\n");
         exit(-1);
       case 0:
         ctrl_recv();
@@ -64,13 +65,13 @@ int main(int argc , char *argv[]){
         break;
     }
 
-    //keep communicating with server
+    /*== Communicating with server ==*/
     while(1)
     {
         printf("$> ");
         fgets(message, sizeof(message),stdin);
         if( send(sock , message , 1024 , 0) < 0) {
-            puts("Send failed");
+            fprintf("Send failed");
             return 1;
         }
         memset(message, 0 , strlen(message));
