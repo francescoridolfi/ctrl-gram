@@ -15,7 +15,7 @@ LICENSE GPLv3
 #include <unistd.h>
 #include <pthread.h>
 #include <sys/wait.h>
-
+#define CLIENT_PORT 5555
 /** Prototype function **/
 void *connection_handler(void *);
 void ctrl_send();
@@ -95,29 +95,31 @@ int main(int argc , char *argv[]){
 }
 
 void ctrl_send(){
+  /*== Declare ==*/
   int sock;
   struct sockaddr_in server;
   char message[1024] , server_reply[1024];
 
-  //Create socket
-  sock = socket(AF_INET , SOCK_STREAM , 0);
-  if (sock == -1)
-  {
-      printf("Could not create socket");
-  }
-  puts("Socket created");
+  printf("\033[1;36m[INFO]\tI'm the child process\033[0;0m\n");
 
+  /*== Create socket ==*/
+  sock = socket(AF_INET , SOCK_STREAM , 0);
+  if (sock == -1){
+      fprintf(stderr, "\033[1;31m[ERROR]\tCould not create socket (for send)\033[0;0m\n");
+      exit(-2);}
+  printf("\033[1;32m[OK]\tSocket created (for send)\033[0;0m\n");
+
+  /*== Settings ==*/
   server.sin_addr.s_addr = inet_addr(ip_table[ip_index-1]);
   server.sin_family = AF_INET;
-  server.sin_port = htons( 5555 );
+  server.sin_port = htons(CLIENT_PORT);
 
-  //Connect to remote server
-  if (connect(sock , (struct sockaddr *)&server , sizeof(server)) < 0)
-  {
-      perror("connect failed. Error");
-      exit(-1);
+  /*== Connect to client ==*/
+  if (connect(sock, (struct sockaddr *)&server , sizeof(server)) < 0){
+      fprintf(stderr, "\033[1;31m[ERROR]\tConnect to client failed\033[0;0m\n");
+      exit(-2);
   }
-  puts("Connected\n");
+  printf("\033[1;32m[OK]\tConnected to client\033[0;0m\n");
   while(1){
     write(sock ,"\nciao\n",sizeof("\nciao\n"));
   }
