@@ -30,7 +30,7 @@ int mod = 0;
 int i;
 // Function
 void init(){
-  system("cat /etc/ctrl-gram/banner.txt");
+  system("echo -e $(cat /etc/ctrl-gram/banner.txt)");
 }
 void info(){
   int errore = 0;

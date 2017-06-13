@@ -40,28 +40,30 @@ int main(int argc , char *argv[]){
     /*== Create socket ==*/
     socket_desc = socket(AF_INET , SOCK_STREAM , 0);
     if(socket_desc == -1){
-        printf("Could not create socket");
+        fprintf(stderr, "\033[1;31m[ERROR]\tCould not create socket\033[0;0m\n");
+        exit(-1);
     }
+    else {printf("\033[1;32m[OK]\tSocket created\033[0;0m\n");}
 
     /*== Prepare the sockaddr_in structure ==*/
     server.sin_family = AF_INET;
     server.sin_addr.s_addr = INADDR_ANY;
-    server.sin_port = htons( port );
+    server.sin_port = htons(port);
 
     /*== Bind ==*/
     if( bind(socket_desc,(struct sockaddr *)&server , sizeof(server)) < 0){
-        puts("bind failed");
+        fprintf(stderr,"\033[1;31m[ERROR]\tBind failed\033[0;0m\n");
         return 1;
     }
-    puts("bind done");
+    printf("\033[1;32m[OK]\tBind done\033[0;0m\n");
 
     /*== Listen  & Accept ==*/
     listen(socket_desc , 3);
-    puts("Waiting for incoming connections...");
+    printf("\033[1;36m[INFO]\tWaiting for incoming connections...\033[0;0m\n");
     c = sizeof(struct sockaddr_in);
     while((new_socket = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c))){
-        puts("Connection accepted\n");
-        printf("Client IP address is: %s\n", inet_ntoa(client.sin_addr));
+        printf("\033[1;32[OK]\tConnection accepted\033[0;0m\n");
+        printf("\033[1;36m[INFO]\tClient IP address is: \033[1;34m%s\033[0;0m\n", inet_ntoa(client.sin_addr));
         ip_table[ip_index] = inet_ntoa(client.sin_addr);
         ip_index++;
         new_sock = malloc(1);
@@ -71,7 +73,7 @@ int main(int argc , char *argv[]){
         send_pid = fork();
         switch (send_pid){
           case -1:
-            fprintf(stderr, "\033[1;31mError fork\033[0;0m\n");
+            fprintf(stderr, "\033[1;31m[ERROR]\tError fork\033[0;0m\n");
             exit(-1);
           case 0:
             ctrl_send();
@@ -81,13 +83,13 @@ int main(int argc , char *argv[]){
         /*== Thread ==*/
         pthread_t sniffer_thread;
         if( pthread_create( &sniffer_thread , NULL ,  connection_handler , (void*) new_sock) < 0){
-            perror("could not create thread");
-            return 1;}
-        puts("Handler assigned");
+            fprintf(stderr, "\033[1;31m[ERROR]\tCould not create thread\033[0;0m\n");
+            exit(-1);}
+        printf("\033[1;32m[OK]\tHandler assigned\033[0;0m\n");
     }
     if (new_socket<0){
-        perror("accept failed");
-        return 1;
+        fprintf(stderr, "\033[1;31m[ERROR]\tAccept failed\033[0;0m\n");
+        exit(-1);
     }
     return 0;
 }
