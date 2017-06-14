@@ -20,14 +20,15 @@ LICENSE GPLv3
 void *connection_handler(void *);
 void ctrl_send();
 /** Global variables **/
-
+int socket_send;
+int socket_recv;
 
 int main(int argc , char *argv[]){
     /*== INIT ==*/
     im_server();
     check_args(argc, argv);
     control();
-    info();
+    //info();
     init();
 
     /*== Declare ==*/
@@ -40,9 +41,9 @@ int main(int argc , char *argv[]){
     /*== Create socket ==*/
     socket_desc = socket(AF_INET , SOCK_STREAM , 0);
     if(socket_desc == -1){
-        fprintf(stderr, "\033[1;31m[ERROR]\tCould not create socket\033[0;0m\n");
+        fprintf(stderr, "\033[1;0m[\033[1;31mERROR\033[1;1m]\033[1;31m\tCould not create socket\033[0;0m\n");
         exit(-1);
-    } printf("\033[1;32m[OK]\tSocket created\033[0;0m\n");
+    } printf("\033[1;0m[\033[1;32mOK\033[1;0m]\033[1;32m\tSocket created\033[0;0m\n");
 
     /*== Settings ==*/
     server.sin_family = AF_INET;
@@ -51,17 +52,17 @@ int main(int argc , char *argv[]){
 
     /*== Bind ==*/
     if( bind(socket_desc,(struct sockaddr *)&server , sizeof(server)) < 0){
-        fprintf(stderr,"\033[1;31m[ERROR]\tBind failed\033[0;0m\n");
+        fprintf(stderr,"\033[1;0m[\033[1;31mERROR\033[1;0m]\033[1;31m\tBind failed\033[0;0m\n");
         return 1;
-    } printf("\033[1;32m[OK]\tBind done\033[0;0m\n");
+    } printf("\033[1;0m[\033[1;32mOK\033[1;0m]\033[1;32m\tBind done\033[0;0m\n");
 
     /*== Listen  & Accept ==*/
     listen(socket_desc , 3);
-    printf("\033[1;36m[INFO]\tWaiting for incoming connections...\033[0;0m\n");
+    printf("\033[1;0m[\033[1;36mINFO\033[1;0m]\033[1;36m\tWaiting for incoming connections...\033[0;0m\n");
     c = sizeof(struct sockaddr_in);
     while((new_socket = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c))){
-        printf("\033[1;32[OK]\tConnection accepted\033[0;0m\n");
-        printf("\033[1;36m[INFO]\tClient IP address is: \033[1;34m%s\033[0;0m\n", inet_ntoa(client.sin_addr));
+        printf("\033[1;0m[\033[1;32mOK\033[1;0m]\033[1;32m\tConnection accepted\033[0;0m\n");
+        printf("\033[1;0m[\033[1;36mINFO\033[1;0m]\033[1;36m\tClient IP address is: \033[1;34m%s\033[0;0m\n", inet_ntoa(client.sin_addr));
         ip_table[ip_index] = inet_ntoa(client.sin_addr);
         ip_index++;
         new_sock = malloc(1);
@@ -71,7 +72,7 @@ int main(int argc , char *argv[]){
         send_pid = fork();
         switch (send_pid){
           case -1:
-            fprintf(stderr, "\033[1;31m[ERROR]\tFork failure\033[0;0m\n");
+            fprintf(stderr, "\033[1;0m[\033[1;31mERROR\033[1;0m]\033[1;31m\tFork failure\033[0;0m\n");
             exit(-1);
           case 0:
             ctrl_send();
@@ -81,31 +82,29 @@ int main(int argc , char *argv[]){
         /*== Thread ==*/
         pthread_t sniffer_thread;
         if( pthread_create( &sniffer_thread , NULL ,  connection_handler , (void*) new_sock) < 0){
-            fprintf(stderr, "\033[1;31m[ERROR]\tCould not create thread\033[0;0m\n");
+            fprintf(stderr, "\033[1;0m[\033[1;31mERROR\033[1;0m]\033[1;31m\tCould not create thread\033[0;0m\n");
             exit(-1);
-        } printf("\033[1;32m[OK]\tHandler assigned\033[0;0m\n");
+        } printf("\033[1;0m[\033[1;32mOK\033[1;0m]\033[1;32m\tHandler assigned\033[0;0m\n");
     }
     if (new_socket<0){
-        fprintf(stderr, "\033[1;31m[ERROR]\tAccept failed\033[0;0m\n");
+        fprintf(stderr, "\033[1;0m[\033[1;31mERROR\033[1;0m]\033[1;31m\tAccept failed\033[0;0m\n");
         exit(-1);
     }
     return 0;
 }
-
 void ctrl_send(){
   /*== Declare ==*/
-  int sock;
   struct sockaddr_in server;
   char message[1024] , server_reply[1024];
 
-  printf("\033[1;36m[INFO]\tI'm the child process\033[0;0m\n");
+  printf("\033[1;0m[\033[1;36mINFO\033[1;0m]\033[1;36m\tI'm the child process\033[0;0m\n");
 
   /*== Create socket ==*/
-  sock = socket(AF_INET , SOCK_STREAM , 0);
-  if(sock == -1){
-      fprintf(stderr, "\033[1;31m[ERROR]\tCould not create socket (for send)\033[0;0m\n");
+  socket_send = socket(AF_INET , SOCK_STREAM , 0);
+  if(socket_send == -1){
+      fprintf(stderr, "\033[1;0m[\033[1;31mERROR\033[1;0m]\033[1;31m\tCould not create socket (for send)\033[0;0m\n");
       exit(-2);
-  } printf("\033[1;32m[OK]\tSocket created (for send)\033[0;0m\n");
+  } printf("\033[1;0m[\033[1;32mOK\033[1;0m]\033[1;32m\tSocket created (for send)\033[0;0m\n");
 
   /*== Settings ==*/
   server.sin_addr.s_addr = inet_addr(ip_table[ip_index-1]);
@@ -113,40 +112,41 @@ void ctrl_send(){
   server.sin_port = htons(CLIENT_PORT);
 
   /*== Connect to client ==*/
-  if (connect(sock, (struct sockaddr *)&server , sizeof(server)) < 0){
-      fprintf(stderr, "\033[1;31m[ERROR]\tConnect to client failed\033[0;0m\n");
+  if (connect(socket_send, (struct sockaddr *)&server , sizeof(server)) < 0){
+      fprintf(stderr, "\033[1;0m[\033[1;31mERROR\033[1;0m]\033[1;31m\tConnect to client failed\033[0;0m\n");
       exit(-2);
-  } printf("\033[1;32m[OK]\tConnected to client\033[0;0m\n");
+  } printf("\033[1;0m[\033[1;32mOK\033[1;0m]\033[1;32m\tConnected to client\033[0;0m\n");
   while(1){
-    write(sock ,"\nciao\n",sizeof("\nciao\n"));
+    write(socket_send,"ciao\n",sizeof("\nciao\n"));
   }
 }
 void *connection_handler(void *socket_desc){
-    //Get the socket descriptor
-    int sock = *(int*)socket_desc;
+
+    /*== Get the socket descriptor ==*/
+    socket_recv = *(int*)socket_desc;
     int read_size;
     char *message , client_message[1024];
-    //Receive a message from client
-    while( (read_size = recv(sock , client_message , 1024 , 0)) > 0 )
+
+    /*== Save identity client ==*/
+    recv(socket_recv, client_connected[nr_connected], sizeof(client_connected[nr_connected]), 0);
+    nr_connected++;
+
+    /*== Receive message from client ==*/
+    while( (read_size = recv(socket_recv , client_message , 1024 , 0)) > 0 )
     {
-        //Send the message back to client
-        write(sock , client_message, sizeof(client_message));
-        printf("Client : %s\n", client_message);
+        printf("\033[1;36mClient : \033[0;0m%s\n", client_message);
         memset(client_message, 0 , strlen(client_message));
         fflush(stdout);
+        control_cmd(client_message);
     }
 
-    if(read_size == 0)
-    {
-        puts("Client disconnected\n");
-        fflush(stdout);
-    }
-    else if(read_size == -1)
-    {
-        perror("recv failed\n");
-    }
+    if(read_size == 0){
+        printf("\033[1;0m[\033[1;36mINFO\033[1;0m]\033[1;36m\tClient disconnected\033[0;0m\n");
+        fflush(stdout);}
+    else if(read_size == -1){
+        fprintf(stderr, "\033[1;0m[\033[1;31mOK\033[1;0m]\033[1;31m\tRecv failed\033[0;0m\n");}
 
-    //Free the socket pointer
+    /*== Free the socket pointer ==*/
     free(socket_desc);
     return 0;
 }

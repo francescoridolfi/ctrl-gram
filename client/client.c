@@ -32,7 +32,6 @@ int main(int argc , char *argv[]){
     int sock;
     struct sockaddr_in server;
     char message[1024] , server_reply[1024];
-    int port = atoi(argv[2]);
     pid_t recv_pid; int recv_status;
 
     /*== Create socket ==*/
@@ -45,7 +44,7 @@ int main(int argc , char *argv[]){
     /*== Settings ==*/
     server.sin_addr.s_addr = inet_addr(argv[1]);
     server.sin_family = AF_INET;
-    server.sin_port = htons(port);
+    server.sin_port = htons(atoi(argv[2]));
 
     /*== Connect to remote server ==*/
     if (connect(sock , (struct sockaddr *)&server , sizeof(server)) < 0) {
@@ -66,6 +65,7 @@ int main(int argc , char *argv[]){
     }
 
     /*== Communicating with server ==*/
+    send(sock, identity, sizeof(identity),0);
     while(1)
     {
         printf("$> ");
@@ -75,15 +75,6 @@ int main(int argc , char *argv[]){
             return 1;
         }
         memset(message, 0 , strlen(message));
-        //Receive a reply from the server
-        if( recv(sock , server_reply , strlen(server_reply) , 0) < 0) {
-            puts("recv failed");
-            break;
-        }
-
-    printf("Server Reply: %s\n", server_reply);
-    server_reply[0]='\0';
-    memset(server_reply, 0, strlen(server_reply));
     }
 
         close(sock);

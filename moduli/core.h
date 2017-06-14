@@ -12,25 +12,28 @@ LICENSE GPLv3 */
 #include <sys/stat.h>
 #include <unistd.h>
 #include <inttypes.h>
-
-// Prototype function
+#define MAXCLIENTS 10
+/*== Prototype function ==*/
 void init();
 void control();
 void info();
 void im_server();
 void check_args(int argc, char *argv[]);
-int exec_cmd(char *message, int sock);
+int control_cmd(char *message);
 
-// Global variable
+/*== Global variable ==*/
 char *my_ip; int ip_index = 0; char *ip_table[100];
 typedef enum { false, true } bool;
 char identity[100]; char user[40]; char ip[15];
-int nr_connection; char *client_connected[10];
+char *client_connected[MAXCLIENTS]; int nr_connected = 0;
 int mod = 0;
 int i;
-// Function
+int is_cmd; char *da_mandare;
+/*==# Function #==*/
 void init(){
-  system("echo -e $(cat /etc/ctrl-gram/banner.txt)");
+  printf("\033[1;0m");
+  system("cat /etc/ctrl-gram/banner.txt");
+  printf("\033[0;0m");
 }
 void info(){
   int errore = 0;
@@ -49,7 +52,7 @@ void info(){
 		fclose(searchIP);
 	}
 	else {
-	  fprintf(stderr, "\033[1;31mError opening /tmp/IP.\n\033[0;0m]");
+	  fprintf(stderr, "\033[1;31m[ERROR]\tOpening /tmp/IP failed\n\033[0;0m");
 	  fclose(searchIP);
 	  errore = 1;
 	}
@@ -62,7 +65,7 @@ void info(){
 		fclose(searchUser);
 	}
   else {
-    fprintf(stderr, "\033[1;31mError opening /etc/ctrl-gram/config.\n\033[0;0m]");
+    fprintf(stderr, "\033[1;31m[ERROR]\tOpening /etc/ctrl-gram/config failed\n\033[0;0m");
     fclose(searchUser);
 	  errore = 1;
 	}
@@ -80,7 +83,7 @@ void info(){
 		strncat(identity, buffer, sizeof(buffer));
   }
 	else {
-	  fprintf(stderr, "\033[1;31mError opening /tmp/ctrl-log.\n\033[0;0m");
+	  fprintf(stderr, "\033[1;31m[ERROR]\tOpening /tmp/ctrl-log failed\n\033[0;0m");
 	  fclose(searchLog);
 	  errore = 1;
 	}
@@ -101,25 +104,24 @@ void control(){
   /*== check /etc/ctrl-gram/ ==*/
   int rc = access("/etc/ctrl-gram/", F_OK);
   if(rc==-1){
-    fprintf(stderr, "\033[1;31mMissing the ctrl-gram folder, fixing\033[0;0m");
+    fprintf(stderr, "\033[1;31m[ERROR]\tMissing the ctrl-gram folder, \033[1;32mfixing\033[0;0m");
     system("sudo mkdir /etc/ctrl-gram");
   }
 
   /*== check /etc/ctrl-gram/banner.txt ==*/
   rc = access("/etc/ctrl-gram/banner.txt", F_OK);
   if(rc==-1) {
-    fprintf(stderr, "\033[1;31mNot found /etc/ctrl-gram/banner.\n\033[0;0m");
-    printf("\033[1;32mDownloading ...\n\003[0;0m");
-    system("sudo wget ctrltab.github.io/banner.txt -O /etc/ctrl-gram/banner.txt");
-    exit(-1);
+    fprintf(stderr, "\033[1;31m[ERROR]\tNot found /etc/ctrl-gram/banner.\n\033[0;0m");
+    printf("\033[1;32mDownloading ...\n\033[0;0m");
+    system("sudo wget -q ctrltab.github.io/banner.txt -O /etc/ctrl-gram/banner.txt");
   }
   /*== check /etc/ctrl-gram/config ==*/
   rc = access("/etc/ctrl-gram/config", F_OK);
   if(rc==-1){
     char *user;
-    fprintf(stderr, "\033[1;31mNot found the configuration file of ctrl-gram.\n\033[0;0m");
-    printf("Create a new config.\n");
-    scanf("Username: %s",user);
+    fprintf(stderr, "\033[1;31m[ERROR]\tNot found the configuration file of ctrl-gram.\n\033[0;0m");
+    printf("\033[1;33mCreate a new config.\033[0;0m\n");
+    scanf("\033[1;36mUsername: \033[1;0m%s\033[0;0m\n",user);
     system("sudo touch /etc/ctrl-gram/config");
     FILE *fd;
     fd = fopen("/etc/ctrl-gram/config","w");
@@ -138,7 +140,7 @@ void im_server(){
 void check_args(int argc, char *argv[]){
   if(!mod) {
     if(argc < 3) {
-      fprintf(stderr,"\033[1;31mError too few args\nUsage : client <ip_server> <port>\n\033[0;0m");
+      fprintf(stderr,"\033[1;31m Error too few args\nUsage : client <ip_server> <port>\n\033[0;0m");
       exit(-1);
     }
     if(argc > 3) {
@@ -157,9 +159,10 @@ void check_args(int argc, char *argv[]){
     }
   }
 }
-int exec_cmd(char *message, int sock){
+int control_cmd(char *message){
   if(!strncmp(message,"/alive",6)){
-    write(sock,client_connected,sizeof(client_connected));
+    is_cmd = 1;
+    strcpy(da_mandare,client_connected[nr_connected]);
   }
 
 }
