@@ -33,11 +33,24 @@ int main(int argc , char *argv[]){
     struct sockaddr_in server;
     char message[1024] , server_reply[1024];
     pid_t recv_pid; int recv_status;
-
+     
+    /*== FORK!! ==*/
+    recv_pid = fork();
+    switch (recv_pid) {
+      case -1:
+        fprintf(stderr, "\033[1;31m[ERROR]\tFork failure\033[0;0m\n");
+        exit(-1);
+      case 0:
+        ctrl_recv();
+      default:
+        sleep(0.5);
+        break;
+    }
+    
     /*== Create socket ==*/
     sock = socket(AF_INET , SOCK_STREAM , 0);
     if (sock == -1) {
-        fprintf("\033[1;31m[ERROR]\tCould not create socket\033[0;0m\n");
+        fprintf(stderr, "\033[1;31m[ERROR]\tCould not create socket\033[0;0m\n");
         exit(-1);
     } printf("\033[1;32m[OK]\tSocket created\033[0;0m\n");
 
@@ -52,18 +65,6 @@ int main(int argc , char *argv[]){
         exit(-1);
     } printf("\033[1;32m[OK]\tConnected\033[0;0m\n");
 
-    /*== FORK!! ==*/
-    recv_pid = fork();
-    switch (recv_pid) {
-      case -1:
-        fprintf(stderr, "\033[1;31m[ERROR]\tFork failure\033[0;0m\n");
-        exit(-1);
-      case 0:
-        ctrl_recv();
-      default:
-        break;
-    }
-
     /*== Communicating with server ==*/
     send(sock, identity, sizeof(identity),0);
     while(1)
@@ -71,7 +72,7 @@ int main(int argc , char *argv[]){
         printf("$> ");
         fgets(message, sizeof(message),stdin);
         if( send(sock , message , 1024 , 0) < 0) {
-            fprintf("Send failed");
+            fprintf(stderr, "\033[1;31m[ERROR]\tSend failed\033[0;0m\n");
             return 1;
         }
         memset(message, 0 , strlen(message));
@@ -85,43 +86,39 @@ void ctrl_recv(){
   struct sockaddr_in server , client;
   char *message;
 
-  //Create socket
+  /*== Create socket ==*/
   socket_desc = socket(AF_INET , SOCK_STREAM , 0);
-  if (socket_desc == -1)
-  {
-      printf("Could not create socket");
-  }
+  if (socket_desc == -1){
+      fprintf(stderr, "\033[1;31m[ERROR]\tCould not create socket (for recv)\033[0;0m\n");
+  } printf("\033[1;32m[OK]\tSocket created (for recv)\033[0;0m\n");
 
-  //Prepare the sockaddr_in structure
+  /*== Prepare the sockaddr_in structure ==*/
   server.sin_family = AF_INET;
   server.sin_addr.s_addr = INADDR_ANY;
   server.sin_port = htons(MY_PORT);
 
-  //Bind
-  if( bind(socket_desc,(struct sockaddr *)&server , sizeof(server)) < 0)
-  {
-      puts("bind failed");
-      exit(-1);
-  }
-  puts("bind done");
+  /*== Bind ==*/
+  if( bind(socket_desc,(struct sockaddr *)&server , sizeof(server)) < 0){
+      fprintf(stderr, "\033[1;31m[ERROR]\tBind failed (for recv)\033[0;0m\n");
+      exit(-2);
+  } printf("\033[1;32m[OK]\tBind done (for recv)\033[0;0m\n");
 
-  //Listen
+  /*== Listen ==*/
   listen(socket_desc , 3);
 
-  //Accept and incoming connection
-  puts("Waiting for incoming connections...");
+  /*== Accept and incoming connection ==*/
+  printf("\033[1;36m[INFO]\tWaiting for incoming connections...\033[0;0m\n");
   c = sizeof(struct sockaddr_in);
   while( (new_socket = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c)) )
   {
-      puts("Connection accepted\n");
+      puts("\033[1;32m[OK]\tConnection accepted\033[0;0m\n");
       pthread_t handler_thread;
       new_sock = malloc(1);
       *new_sock = new_socket;
 
-      if( pthread_create( &handler_thread , NULL ,  connection_handler , (void*) new_sock) < 0)
-      {
-          perror("could not create thread");
-          exit(-1);
+      if( pthread_create( &handler_thread , NULL ,  connection_handler , (void*) new_sock) < 0){
+//           perror("could not create thread");
+          exit(-2);
       }
       else {
         pthread_join(handler_thread, NULL);

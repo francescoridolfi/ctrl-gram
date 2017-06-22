@@ -104,7 +104,7 @@ void control(){
   /*== check /etc/ctrl-gram/ ==*/
   int rc = access("/etc/ctrl-gram/", F_OK);
   if(rc==-1){
-    fprintf(stderr, "\033[1;31m[ERROR]\tMissing the ctrl-gram folder, \033[1;32mfixing\033[0;0m");
+    fprintf(stderr, "\033[1;31m[ERROR]\tMissing the ctrl-gram folder, \033[1;32mfixing\033[0;0m\n");
     system("sudo mkdir /etc/ctrl-gram");
   }
 
@@ -140,7 +140,7 @@ void im_server(){
 void check_args(int argc, char *argv[]){
   if(!mod) {
     if(argc < 3) {
-      fprintf(stderr,"\033[1;31m Error too few args\nUsage : client <ip_server> <port>\n\033[0;0m");
+      fprintf(stderr,"\033[1;31mError too few args\nUsage : client <ip_server> <port>\n\033[0;0m");
       exit(-1);
     }
     if(argc > 3) {
