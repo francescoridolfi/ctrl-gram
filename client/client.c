@@ -15,7 +15,7 @@ LICENSE GPLv3
 #include <pthread.h>
 #include <unistd.h>
 #include <sys/wait.h>
-#define MY_PORT 5555
+#define MY_PORT 4444
 
 /*== Prototype functions ==*/
 void *connection_handler(void *);
@@ -43,7 +43,7 @@ int main(int argc , char *argv[]){
       case 0:
         ctrl_recv();
       default:
-        sleep(0.5);
+        //sleep(1);
         break;
     }
     
@@ -111,13 +111,13 @@ void ctrl_recv(){
   c = sizeof(struct sockaddr_in);
   while( (new_socket = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c)) )
   {
-      puts("\033[1;32m[OK]\tConnection accepted\033[0;0m\n");
+      puts("\033[1;32m[OK]\tConnection accepted (for recv)\033[0;0m\n");
       pthread_t handler_thread;
       new_sock = malloc(1);
       *new_sock = new_socket;
 
       if( pthread_create( &handler_thread , NULL ,  connection_handler , (void*) new_sock) < 0){
-//           perror("could not create thread");
+          fprintf(stderr, "\033[1;31m[ERROR]\tCould not create thread (for recv)\033[0;0m\n");
           exit(-2);
       }
       else {
@@ -125,22 +125,21 @@ void ctrl_recv(){
       }
   }
 
-  if (new_socket<0)
-  {
-      perror("accept failed");
-      exit(-1);
+  if (new_socket<0){
+      fprintf(stderr, "\033[1;31m[ERROR]\tAccept failed (for recv)\033[0;0m\n");
+      exit(-2);
   }
 }
 void *connection_handler(void *socket_desc){
-    //Get the socket descriptor
+    
+    /*== Declare ==*/
     int sock = *(int*)socket_desc;
     int read_size;
     char *message , client_message[1024];
-    //Receive a message from client
+    
+    /*== Receive a message from client ==*/
     while( (read_size = recv(sock , client_message , 1024 , 0)) > 0 )
     {
-        //Send the message back to client
-        write(sock , client_message, sizeof(client_message));
         printf("Client : %s\n", client_message);
         memset(client_message, 0 , strlen(client_message));
         fflush(stdout);
