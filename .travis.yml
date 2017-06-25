@@ -1,5 +1,7 @@
 language: c
 sudo: false # only for faster builds
 script:
-  - gcc -coverage hello.c -o hello
-  - ./hello
+  - gcc server/server.c -o Debug/server -pthread
+  - gcc client/client.c -o Debug/client -pthread
+  - ./Debug/server
+  - ./Debug/client
