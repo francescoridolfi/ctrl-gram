@@ -1,7 +1,5 @@
-language: c
+language: go
 sudo: false # only for faster builds
 script:
-  - gcc server/server.c -o Debug/server -pthread
-  - gcc client/client.c -o Debug/client -pthread
-  - ./Debug/server
-  - ./Debug/client
+  - go build src/server.go debug/server
+  - ./debug/server
