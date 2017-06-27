@@ -1,5 +1,0 @@
-data = join > return array["username","ip","uuid"]
-data = msg > return array["username","ip","uuid","msg","to"]
-data = getPlayers > return array["username1","username2","etc.."]
-data = destory $to $msg > return "MSG killed!"
-data = getPlayer(username="nick" or ip="xxx.xxx.xxx.xxx" or uuid="haifas6aaosdfja928") > return array["username","ip","uuid"]
