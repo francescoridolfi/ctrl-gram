@@ -1,5 +1,10 @@
 language: go
-sudo: false # only for faster builds
+go:
+  - 1.3.3
+  - 1.4.2
+  - 1.5.1
+  - relase
+  - tip
 script:
   - go build src/server.go debug/server
   - ./debug/server
