@@ -6,5 +6,6 @@ go:
   - relase
   - tip
 script:
-  - go build src/server.go debug/server
-  - ./debug/server
+  - cd debug
+  - go build ../src/server.go
+  - ./server
