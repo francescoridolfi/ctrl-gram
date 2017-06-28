@@ -4,7 +4,7 @@ import "net"
 import "fmt"
 import "bufio"
 import "strings" // only needed below for sample processing
-func handler
+
 func main() {
 
 	fmt.Println("Launching server...")
