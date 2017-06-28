@@ -1,3 +1,4 @@
+package main
 import (
   "os"
   "fmt"
@@ -6,18 +7,24 @@ import (
 )
 
 func CreateConfig() {
+  uid := os.Getuid()
+  if (uid != 0) {
+    fmt.Println("\033[1;31m[ERROR]\tPer creare la config devi avviare ctrl-tab usando su/sudo\033[0;0m");
+    os.Exit(1)
+  }
   inputReader := bufio.NewReader(os.Stdin)
-  fmt.Println("Inserisci il tuo codename: ")
+  fmt.Printf("\033[1;36mInserisci il tuo codename: \033[0;0m")
   input,_ := inputReader.ReadString('\n')
   ioutil.WriteFile("/etc/ctrl-gram.conf", []byte(input), 0x644);
+  fmt.Println("\033[1;36mLa consigliamo di riavviare ctrl-gram\033[0;0m")
 }
 
 /*==Controllare se esiste la config==*/
-func IfConfig()  {
+func IfConfig() {
     path := "/etc/ctrl-gram.conf"
     _, err := os.Stat(path);
     if (os.IsNotExist(err)) {
-      fmt.Printf("\033[1;31m[ERROR]\tIl file di configurazione non esiste")
+      fmt.Println("\033[1;31m[ERROR]\tIl file di configurazione non esiste\033[0;0m")
       CreateConfig()
     }
 }

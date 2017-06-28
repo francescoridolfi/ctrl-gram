@@ -5,7 +5,7 @@ import "fmt"
 import "bufio"
 import "os"
 
-func client() {
+func main() {
 
 	// connect to this socket
 	conn, _ := net.Dial("tcp", "127.0.0.1:8081")
