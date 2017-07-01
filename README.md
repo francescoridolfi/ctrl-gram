@@ -1,15 +1,14 @@
-          __     __    _                                    
-          \ \   / /__ (_) ___ ___  __ _ _ __ __ _ _ __ ___  
-           \ \ / / _ \| |/ __/ _ \/ _` | '__/ _` | '_ ` _ \ 
-            \ V / (_) | | (_|  __/ (_| | | | (_| | | | | | |
-             \_/ \___/|_|\___\___|\__, |_|  \__,_|_| |_| |_|
-                                  |___/                     
-                          
-## > Develope by SourceCode2 and ridolfino
-## > v1.0 Alpha
-## > YEAR: 2017
+____ ____ ____ ____     ____ ____ ____
+||C |||T |||R |||L ||   ||T |||A |||B ||
+||__|||__|||__|||__||   ||__|||__|||__||
+|/__\|/__\|/__\|/__\|   |/__\|/__\|/__\|
 
 
-### Linux install:
-For get the client you need to install from GitHub the project at the link: https://github.com/SourceCode2/Voicegram.git and now you need
-to change the path and go to VoicegramPath/Debug, do ./client for start the client or ./server for start the server
+###$> Developer SourceCode2
+###$> v1.0 pre-Alpha
+###$> YEAR: 2017
+
+
+### Gnu/Linux install:
+For get the client you need to "git clone https://github.com/SourceCode2/ctrl-gram.git" and go to ctrl-gram/Debug, do ./client for start the client or ./server for start the server.
+TANKS

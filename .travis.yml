@@ -2,5 +2,5 @@ language: go
 go:
   - 1.5.1
 script:
-  - go build src/server.go
-  - ./server
+  - go build src/mainServer.go
+  - go build src/mainClient.go src/identity.go src/control.go

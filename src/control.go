@@ -6,6 +6,7 @@ import (
   "io/ioutil"
 )
 
+/*== Creare /etc/ctrl-gram.conf ==*/
 func CreateConfig() {
   uid := os.Getuid()
   if (uid != 0) {
@@ -16,7 +17,6 @@ func CreateConfig() {
   fmt.Printf("\033[1;36mInserisci il tuo codename: \033[0;0m")
   input,_ := inputReader.ReadString('\n')
   ioutil.WriteFile("/etc/ctrl-gram.conf", []byte(input), 0x644);
-  fmt.Println("\033[1;36mLa consigliamo di riavviare ctrl-gram\033[0;0m")
 }
 
 /*==Controllare se esiste la config==*/
