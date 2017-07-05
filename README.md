@@ -2,6 +2,7 @@
 ### CtrlGram
 
 ### $> Developer SourceCode2
+### $> Plugin and Bot System developer ridolfino
 ### $> v1.0 pre-Alpha
 ### $> YEAR: 2017
 
